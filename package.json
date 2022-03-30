@@ -1,0 +1,24 @@
+{
+  "name": "social-network-api",
+  "version": "1.0.0",
+  "description": "Functional backend for a social media network using MongoDB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jonathan6/Social-Network-Api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jonathan6/Social-Network-Api/issues"
+  },
+  "homepage": "https://github.com/Jonathan6/Social-Network-Api#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mongodb": "^4.4.1"
+  }
+}
