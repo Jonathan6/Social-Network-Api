@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User } = require('../../models/User');
+const { User } = require('../../models');
 
 // Get all users
 router.get('/', async (req,res) => {
@@ -15,6 +15,8 @@ router.get('/', async (req,res) => {
 router.get('/:userId', async (req,res) => {
     try {
         const userData = await User.findById(req.params.userId);
+        console.log(userData.thoughts);
+        // userData.thoughts.filter((id) => ObjectId()
         res.json( userData);
     } catch(err) {
         res.status(500).json();
@@ -24,15 +26,10 @@ router.get('/:userId', async (req,res) => {
 // Post new user
 router.post('/', async (req,res) => {
     try {
-        const newUser = new User(
-            { username: req.body.username ,
-            email: req.body.email }
-        );
-        newUser.save();
-
-        res.status(200).json(newUser);
+        User.create(req.body);
+        res.status(200).json();
     } catch(err) {
-        res.status(500).json();
+        res.status(500).json(err);
     }
 });
 
@@ -54,11 +51,14 @@ router.put('/:userId', async (req,res) => {
 
 router.put('/:userId/friends/:friendId', async (req,res) => {
     try {
-        const userData = await User.findById(req.params.userId);
-        userData.friends = [...userData.friends, req.params.friendId];
-        userData.save();
+        const user1 = await User.findById(req.params.userId);
+        const user2 = await User.findById(req.params.friendId);
+        user1.friends = [...user1.friends, req.params.friendId];
+        user1.save();
+        user2.friends = [...user2.friends, req.params.userId];
+        user2.save();
 
-        res.json(userData);
+        res.json(user1);
     } catch(err) {
         res.status(500).json();
     }
@@ -68,11 +68,14 @@ router.put('/:userId/friends/:friendId', async (req,res) => {
 
 router.delete('/:userId/friends/:friendId', async (req,res) => {
     try {
-        const userData = await User.findById(req.params.userId);
-        userData.friends = userData.friends.filter(id => id != req.params.friendId);
-        userData.save();
+        const user1 = await User.findById(req.params.userId);
+        const user2 = await User.findById(req.params.friendId);
+        user1.friends = userData.friends.filter(id => id != req.params.friendId);
+        user1.save();
+        user2.friends = userData.friends.filter(id => id != req.params.userId);
+        user2.save();
 
-        res.json(userData);
+        res.json(user1);
     } catch(err) {
         res.status(500).json();
     }

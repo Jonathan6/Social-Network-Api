@@ -7,28 +7,23 @@ This is a project to practice learning MongoDB and using NOSQL database systems.
 
 ## Table of Contents
 - [Description](#description)
-- [Backend Preview](#backend-preview)
+- [Program Video Walkthrough](#program-video-walkthrough)
 - [Overview](#overview)
-- [Bulma](#bulma)
-- [Chart.js](#chartjs)
+- [Challenges](#challenges)
 - [Conclusion](#conclusion)
 
-## Weather Dashboard Website Preview
+## Program Video Walkthrough
 
 <details>
 <summary>Click to Reveal</summary>
 
-[![Screenshot of Password Generator Website](assets/images/websitepreview.jpg)](https://jonathan6.github.io/Weather-Dashboard/)
-Click the preview to be redirected to the website!
+[Click](https://jonathan6.github.io/Weather-Dashboard/) to be redirected to the video!
 
 </details>
 
 ## Overview
- 
-straight forward project
-we were given a good draft of what we needed to code
-completing the tasks really showed the areas where I am uncomfortable with mongo, mongoose, and express
 
+Working with MongoDB was an interesting experience since I am now really familiar with SQL. Learning about NOSQL databases and documents I initially thought that it would be disorganized and hard to navigate. Coming from SQL I am finally comfortable thinking in rows and setting up table columns to organize all our data. Working on this project allowed me to work with multiple collections in the same NOSQL database, a feature that in hindsight, would be vital to be a competitor to SQL databases. Working through the project made me appreciate how easy it was to set up posts, deletes, and updates however working with all the new features within MongooseJS turned out to be a really overwhelming experience. I'm sure I have only scrated the surface of the language but it was a great learning experience.
 
 
 ## Challenges

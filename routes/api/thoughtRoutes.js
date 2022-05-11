@@ -1,14 +1,16 @@
 const router = require('express').Router();
-const { Thought, Reaction } = require('../../models/Thought');
-const { User } = require('../../models/User');
+const { Thought, User } = require('../../models');
+const mongoose = require('mongoose');
 
 // get all thoughts
 router.get('/', async (req,res) => {
     try {
         const thoughtData = await Thought.find();
-        res.json(thoughtData);
-    } catch(err) {
-        res.status(500).json();
+        console.log(thoughtData);
+        res.status(200).json(thoughtData);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
     }
 });
 
@@ -27,19 +29,16 @@ router.get('/:thoughtId', async (req,res) => {
 // post to create a new thought (don't forget to push the created thought's _id to the associated user's thoughts array field)
 router.post('/', async (req,res) => {
     try {
+
+        const user = await User.findOne({ username: req.body.username});
         // Creates new Thought and saves it to the db
-        const newThought = new Thought({ 
-            thoughtText: req.body.thoughtText, 
-            username: req.body.username
-        });
-        newThought.save();
-
+        const newThought = await Thought.create(req.body);
         // Finds the corresponding user and adds the newThought ID to the thoughts array
-        const userData = await User.find(req.body.username);
-        userData.thoughts.push(newThought._id);
-        userData.save();
+        newThought.save();
+        user.thoughts.push(newThought._id);
+        user.save();
 
-        res.json(thoughtData);
+        res.json(newThought);
     } catch(err) {
         res.status(500).json();
     }
@@ -49,8 +48,8 @@ router.post('/', async (req,res) => {
 // put to update a thought by its _id
 router.put('/:thoughtId', async (req,res) => {
     try {
-        const thoughtData = await Thought.findOneAndUpdate({_id: req.params.thoughtId}, {...req.body});
-        res.json( userData );
+        const thoughtData = await Thought.findOneAndUpdate( req.params.thoughtId, { $set: req.body}, {new: true});
+        res.json( thoughtData );
     } catch(err) {
         res.status(500).json();
     }
@@ -60,8 +59,12 @@ router.put('/:thoughtId', async (req,res) => {
 // delete to remove a thought by its _id
 router.delete('/:thoughtId', async (req,res) => {
     try {
-        const thoughtData = await Thought.findOneAndDelete(req.params.thoughtId);
-        res.json( thoughtData );
+        const thoughtData = await Thought.findByIdAndDelete(req.params.thoughtId);
+        if (thoughtData) {
+            console.log(thoughtData);
+        }
+        await User.updateOne({username: thoughtData.username}, {$pull: {thoughts: mongoose.Types.ObjectId(req.params.thoughtId)}});
+        res.json(thoughtData);
     } catch(err) {
         res.status(500).json();
     }
@@ -71,29 +74,21 @@ router.delete('/:thoughtId', async (req,res) => {
 
 // api/thoughts/:thoughtId/reactions
 // post to create a reaction stored in a single thought's reactions array field
-router.post('/thoughts/:thoughtId/reactions', (req,res) => {
+router.post('/:thoughtId/reactions', async (req,res) => {
     try {
-        const thoughtData = Thought.findById(req.params.thoughtId);
-        const newReaction = new Reaction({
-            reactionBody: req.body.reactionBody,
-            username: thoughtData.username }
-        );
-        thoughtData.reactions.push(newReaction);
-
-        res.status(200).json(newReaction);
+        await Thought.updateOne({_id: mongoose.Types.ObjectId(req.params.thoughtId)}, {$push: {reactions: {...req.body}}});
+        res.status(200).json();
     } catch(err) {
         res.status(500).json();
     }
 });
 
 // delete to pull and remove a reaction by the reaction's reactionId value
-router.post('/thoughts/:thoughtId/reactions/:reactionId', (req,res) => {
+router.delete('/:thoughtId/reactions/:reactionId', async (req,res) => {
     try {
-        const thoughtData = Thought.findById(req.params.thoughtId);
-        thoughtData.reactions = thoughtData.reactions.filter(reaction => reaction._id != req.params.reactionId);
-        thoughtData.save();
+        await Thought.findByIdAndUpdate({_id: mongoose.Types.ObjectId(req.params.thoughtId)}, {$pull: {reactions: mongoose.Types.ObjectId(req.params.reactionId)}});
 
-        res.status(200).json(newReaction);
+        res.status(200).json("works!");
     } catch(err) {
         res.status(500).json();
     }

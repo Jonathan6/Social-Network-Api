@@ -1,30 +1,31 @@
-const mongoose = require('mongoose');
+const {Schema, model, Types} = require('mongoose');
 
-const reactionSchema = new mongoose.Schema({
+const reactionSchema = new Schema({
+    reactionId: {type: Schema.Types.ObjectId, default: () => new Types.ObjectId()},
     reactionBody: {type: String, required: true, maxlength: 280},
     username: { type: String, required: true },
-  },
-  {
-    timestamps: {createdAt: 'created_at'}
-});
-
-const thoughtSchema = new mongoose.Schema({
-    thoughtText: { type: String, required: true, maxlength: 280, minlength: 1},
-    username: {type: String, required: true},
-    reactions: [reactionSchema],
-    user_id: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-        },
-    ],
+    createdAt: {type: Date, default: Date.now, get: date => date.toLocaleString()}
 },
 {
-    timestamps: {createdAt: 'created_at'}
+    _id: false,
 });
 
-const Thought = mongoose.model('Thought', thoughtSchema);
+reactionSchema.set('toJSON', {getters: true});
+reactionSchema.set('toObject', {getters: true});
 
-const handleError = (err) => console.error(err);
+const thoughtSchema = new Schema({
+    thoughtText: {type: String, required: true, maxlength: 280, minlength: 1},
+    username: {type: String, required: true, ref: 'User'},
+    reactions: [reactionSchema],
+    createdAt: {type: Date, default: Date.now, get: (date) => date.toLocaleString()}
+});
+
+
+// TODO TODO
+thoughtSchema.virtual('reactioncount').get(function(){
+    return this.reactions.length;
+})
+thoughtSchema.set('toJSON', {getters: true, virtuals: true});
+const Thought = model('Thought', thoughtSchema);
 
 module.exports = Thought;
