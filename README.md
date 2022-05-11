@@ -17,7 +17,7 @@ This is a project to practice learning MongoDB and using NOSQL database systems.
 <details>
 <summary>Click to Reveal</summary>
 
-[Click](https://jonathan6.github.io/Weather-Dashboard/) to be redirected to the video!
+[Click](https://youtu.be/-YoEXAGc-o0) to be redirected to the video!
 
 </details>
 
